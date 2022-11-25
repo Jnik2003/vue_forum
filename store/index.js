@@ -55,6 +55,13 @@ export default createStore({
     logout(state){
       state.isLoggedIn = false
       state.isRememberMe = false
+      // state.loginInputs[0].value = ''
+      // state.loginInputs[1].value = ''
+      state.loginInputs.forEach(item => {
+        item.activated = false
+        item.valid = false
+        item.value = ''
+      })
       localStorage.removeItem('login')
     },
     toggleLoginBtn(state, value){
@@ -93,7 +100,7 @@ export default createStore({
   actions: {
     async login({ commit }, [login, pwd, rem] , getters) {
       try {
-        // let response = await fetch("http://test3.jnik.s53.hhos.ru/php/del_data.php", { // production
+        // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/login.php", { // production
         let response = await fetch('http://api/forum/login.php', {
           method: 'POST',
           headers: {
@@ -134,7 +141,7 @@ export default createStore({
     },
    async register({commit},  [login, nick, pwd]){
       try {
-        // let response = await fetch("http://test3.jnik.s53.hhos.ru/php/del_data.php", { // production
+        // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/register.php", { // production
         let response = await fetch('http://api/forum/register.php', {
           method: 'POST',
           headers: {

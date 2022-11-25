@@ -16,89 +16,89 @@ export default createStore({
     registerResult: '',
     //чекбокс запомнить меня
     isRememberMe: false,
-
   },
   getters: {
     getLoginInputs(state) {
       return state.loginInputs
     },
-    isLogged(state){
+    isLogged(state) {
       return state.isLoggedIn
     },
-    isLoginError(state){
+    isLoginError(state) {
       return state.loginError
     },
-    getRegisterInputs(state){
+    getRegisterInputs(state) {
       return state.registerInputs
     },
-    getIsBtnLoginActive(state){
+    getIsBtnLoginActive(state) {
       return state.isBtnLoginActive
     },
-    getRegisterResult(state){
+    getRegisterResult(state) {
       return state.registerResult
     },
-    getIsRememberMe(state){
+    getIsRememberMe(state) {
       return state.isRememberMe
-    }
+    },
   },
   mutations: {
-    validation(state, [activated, valid, ind, array]){
+    validation(state, [activated, valid, ind, array]) {
       state[array][ind].activated = activated
       state[array][ind].valid = valid
     },
-    login(state){
+    login(state) {
       state.isLoggedIn = true
     },
-    loginError(state, value){
+    loginError(state, value) {
       state.loginError = value
     },
-    logout(state){
+    logout(state) {
       state.isLoggedIn = false
       state.isRememberMe = false
-      // state.loginInputs[0].value = ''
-      // state.loginInputs[1].value = ''
-      state.loginInputs.forEach(item => {
+      state.registerResult = ''
+      state.loginInputs.forEach((item) => {
         item.activated = false
         item.valid = false
         item.value = ''
       })
       localStorage.removeItem('login')
+      localStorage.removeItem('hash')
     },
-    toggleLoginBtn(state, value){
+    toggleLoginBtn(state, value) {
       state.isBtnLoginActive = value
     },
-    toggleRegisterBtn(state, value){
+    toggleRegisterBtn(state, value) {
       state.isBtnLoginActive = value
     },
-    registerResult(state, value){
+    registerResult(state, value) {
       state.registerResult = value
     },
-    clearRegisterInputs(state){
-      state.registerInputs.forEach(item => {
-          item.value = ''
-          item.activated = false
-          item.valid = false
-        })
+    clearRegisterInputs(state) {
+      state.registerInputs.forEach((item) => {
+        item.value = ''
+        item.activated = false
+        item.valid = false
+      })
     },
-    isRem(state, value){
+    isRem(state, value) {
       state.isRememberMe = value
     },
-    createLS(state){
-      let value = state.loginInputs[0].value     
-      localStorage.setItem('login', JSON.stringify(value));
+    createLS(state, hash) {
+      let value = state.loginInputs[0].value
+      localStorage.setItem('login', JSON.stringify(value))
+      localStorage.setItem('hash', hash)
     },
-    delLS(){
+    delLS() {
       localStorage.removeItem('login')
     },
-    autologin(state, login){
-      state.isLoggedIn = true
+    autologin(state, [login, hash]) {
+      console.log(login, hash)
       login = login.replaceAll('"', '')
-      console.log(login)
+      state.isLoggedIn = true
       state.loginInputs[0].value = login
-    }
+    },
   },
   actions: {
-    async login({ commit }, [login, pwd, rem] , getters) {
+    async login({ commit, getters }, [login, pwd, rem]) {
       try {
         // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/login.php", { // production
         let response = await fetch('http://api/forum/login.php', {
@@ -111,35 +111,35 @@ export default createStore({
         }) // serve
         let res_from_login_php = await response.text()
         // res_from_login_php = JSON.parse(res_from_login_php)
-        console.log(JSON.parse(res_from_login_php));
-        if(JSON.parse(res_from_login_php)[0] === '1'){
+        console.log(JSON.parse(res_from_login_php))
+        // console.log(getters.getIsRememberMe)
+        if (JSON.parse(res_from_login_php)[0] === '1') {
           //если галочка запомнить - создаем запись в ЛС
-          if(JSON.parse(res_from_login_php)[1] != false){            
-            commit('createLS')
-          } 
-          else{
+          // if (JSON.parse(res_from_login_php)[2] != false) {
+          if (getters.getIsRememberMe != false) {
+            let hash = JSON.parse(res_from_login_php)[1]
+            commit('createLS', hash)
+          } else {
             commit('delLS')
-          }          
+          }
           commit('login')
           commit('loginError', '')
-        }
-        else{
-          console.log(JSON.parse(res_from_login_php));
+        } else {
+          console.log(JSON.parse(res_from_login_php))
           commit('loginError', 'Неверный логин или пароль')
         }
-        
       } catch (e) {
         console.log('err')
       }
     },
-    
-    validation({commit}, [activated, valid, ind, array]){
+
+    validation({ commit }, [activated, valid, ind, array]) {
       commit('validation', [activated, valid, ind, array])
     },
-    logout({commit}){
+    logout({ commit }) {
       commit('logout')
     },
-   async register({commit},  [login, nick, pwd]){
+    async register({ commit }, [login, nick, pwd]) {
       try {
         // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/register.php", { // production
         let response = await fetch('http://api/forum/register.php', {
@@ -150,33 +150,54 @@ export default createStore({
           body: JSON.stringify([login, nick, pwd]),
         }) // serve
         let res_from_php = await response.text()
-        
-        if(res_from_php === '1'){
+
+        if (res_from_php === '1') {
           commit('registerResult', 'Успешно')
           commit('toggleLoginBtn', true)
           commit('clearRegisterInputs')
-        }
-        else{
+        } else {
           commit('registerResult', 'Такой логин есть')
           commit('toggleLoginBtn', false)
         }
-        
       } catch (e) {
         console.log('err')
       }
     },
-    toggleLoginBtn({commit}, value){
+    toggleLoginBtn({ commit }, value) {
       commit('toggleLoginBtn', value)
     },
-    toggleRegisterBtn({commit}, value){
+    toggleRegisterBtn({ commit }, value) {
       commit('toggleRegisterBtn', value)
     },
-    isRem({commit}, value){
+    isRem({ commit }, value) {
       commit('isRem', value)
     },
-    autologin({commit}, login){
-      commit('autologin', login)
-    }
+    async autologin({ commit }, [login, hash]) {
+      
+      login = login.replaceAll('"', '')
+      try {
+        // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/login.php", { // production
+        let resp = await fetch('http://api/forum/autologin.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          // withCredentials: true,
+          body: JSON.stringify([login, hash]),
+        }) // serve
+        let res_from_autologin_php = await resp.text()
+        console.log(res_from_autologin_php)
+        // console.log(JSON.parse(res_from_autologin_php))
+        if (res_from_autologin_php == 1) {
+          commit('autologin', [login, hash])
+        }
+        else{
+          commit('logout')
+        }
+      } catch (e) {
+        console.log('err autologin')
+      }
+    },
   },
   modules: {},
 })
@@ -187,7 +208,7 @@ function loginInputs() {
       label: 'Email',
       name: 'email',
       type: 'email',
-      value: '',
+      value: 'admin4@c.com',
       pattern: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       valid: false,
       activated: false,
@@ -196,11 +217,11 @@ function loginInputs() {
       label: 'Пароль',
       name: 'password',
       type: 'password',
-      value: '',
+      value: '111',
       pattern: /^[\w\d]{3,30}$/iu,
       valid: false,
       activated: false,
-    },        
+    },
   ]
 }
 
@@ -223,7 +244,7 @@ function registerInputs() {
       pattern: /^[\w\d]{3,30}$/iu,
       valid: false,
       activated: false,
-    },      
+    },
     {
       label: 'Пароль',
       name: 'password',
@@ -232,10 +253,10 @@ function registerInputs() {
       pattern: /^[\w\d]{3,30}$/iu,
       valid: false,
       activated: false,
-    },        
+    },
   ]
 }
 
-function delLS(){
+function delLS() {
   console.log('delLS')
 }

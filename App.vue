@@ -35,7 +35,7 @@ export default {
     
     if(localStorage.getItem('login')){
       console.log(localStorage.getItem('login'))
-      this.$store.dispatch('autologin', localStorage.getItem('login'))
+      this.$store.dispatch('autologin', [localStorage.getItem('login'),localStorage.getItem('hash')])
     }
     else{
       console.log('no')

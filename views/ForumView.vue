@@ -1,0 +1,14 @@
+<template>
+  <div class="container">
+    <h1>Форум</h1>
+    <div class="forum" v-if="$store.getters.isLogged"></div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+  .forum{
+    width: 100%;
+    height: 300px;
+    background-color: blueviolet;
+  }
+</style>

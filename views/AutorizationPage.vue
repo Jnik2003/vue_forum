@@ -39,16 +39,16 @@ export default {
   methods: {
     toggleLoginBtnActive() {
       // this.isBtnLoginActive = true;
-      this.$store.dispatch('toggleLoginBtn', true)
+      this.$store.dispatch('auth/toggleLoginBtn', true)
     },
     toggleRegisterBtnActive() {
       // this.isBtnLoginActive = false;
-       this.$store.dispatch('toggleRegisterBtn', false)
+       this.$store.dispatch('auth/toggleRegisterBtn', false)
     },
   },
   computed:{
     isBtnLoginActive(){
-      return this.$store.getters.getIsBtnLoginActive
+      return this.$store.getters['auth/getIsBtnLoginActive']
     }
   }
 };

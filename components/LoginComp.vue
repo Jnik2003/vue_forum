@@ -30,7 +30,7 @@
         >Вход</button-comp
       >
     </div>
-    <p class="error">{{ $store.getters.isLoginError }}</p>
+    <p class="error">{{ $store.getters['auth/isLoginError'] }}</p>
   </div>
 </template>
 
@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       isInputCheckbox: false,
-      isUserLoggedIn: this.$store.getters.isLogged,    
+      isUserLoggedIn: this.$store.getters['auth/isLogged'],    
       // this.$store.getters.getIsRememberMe 
     };
   },
@@ -53,7 +53,7 @@ export default {
       });
     },
     formInputs() {
-      return this.$store.getters.getLoginInputs;
+      return this.$store.getters['auth/getLoginInputs'];
     },
    
   },
@@ -63,7 +63,7 @@ export default {
       let activated = true;
       let valid = this.formInputs[ind].pattern.test(this.formInputs[ind].value);
       // console.log(activated, valid);
-      this.$store.dispatch("validation", [
+      this.$store.dispatch("auth/validation", [
         activated,
         valid,
         ind,
@@ -73,10 +73,10 @@ export default {
     login() {
       let login = this.formInputs[0].value;
       let pwd = this.formInputs[1].value;
-      let rem = this.$store.getters.getIsRememberMe //стоит ли галочка на чекбоксе
-      this.$store.dispatch("login", [login, pwd, rem]).then(() => {
+      let rem = this.$store.getters['auth/getIsRememberMe'] //стоит ли галочка на чекбоксе
+      this.$store.dispatch("auth/login", [login, pwd, rem]).then(() => {
         // если вошел - на форум, если нет - регистрация
-        if (this.$store.getters.isLogged) {
+        if (this.$store.getters['auth/isLogged']) {
           this.$router.push({ name: "forum" });
         } else {
           return false;
@@ -84,7 +84,7 @@ export default {
       });
     },
      isRem(){
-      this.$store.dispatch('isRem', this.isInputCheckbox)
+      this.$store.dispatch('auth/isRem', this.isInputCheckbox)
     },
   },
   mounted() {},

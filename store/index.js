@@ -1,12 +1,14 @@
 import { createStore } from 'vuex'
 import auth from './auth.js'
-import forum from '@/store/forum.js'
+import themes from '@/store/themes.js'
+import posts from '@/store/posts.js'
 
 export default createStore({
   
   modules: {
     auth,
-    forum,
+    themes,
+    posts,
   },
 })
 

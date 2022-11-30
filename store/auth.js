@@ -103,7 +103,7 @@ export default {
     async login({ commit, getters }, [login, pwd, rem]) {
       try {
         // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/login.php", { // production
-        let response = await fetch('http://api/forum/login.php', {
+        let response = await fetch(`${process.env.VUE_APP_URL_TO_DB}login.php`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -144,7 +144,7 @@ export default {
     async register({ commit }, [login, nick, pwd]) {
       try {
         // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/register.php", { // production
-        let response = await fetch('http://api/forum/register.php', {
+        let response = await fetch(`${process.env.VUE_APP_URL_TO_DB}register.php`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -178,7 +178,7 @@ export default {
       login = login.replaceAll('"', '')
       try {
         // let response = await fetch("http://test4.jnik.s53.hhos.ru/php/login.php", { // production
-        let resp = await fetch('http://api/forum/autologin.php', {
+        let resp = await fetch(`${process.env.VUE_APP_URL_TO_DB}autologin.php`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AutorizationPage from '@/views/AutorizationPage.vue'
+import SingleTheme from '@/components/SingleTheme.vue'
 
 const routes = [
   {
@@ -20,6 +21,12 @@ const routes = [
     path: '/autorization',
     name: 'autorization',
     component: AutorizationPage
+  },
+  {
+    path: '/forum/:id',
+    name: 'theme',
+    component: SingleTheme,
+    props: true
   },
 ]
 

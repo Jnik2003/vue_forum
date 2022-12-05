@@ -6,9 +6,10 @@
         <th>Дата</th>
         <th>Тема</th>
         <th>Пользователь</th>
+        <th>Постов в теме</th>
       </tr>
 
-      <tr v-for="data in getThemes" :key="data.id" class="tb_string">
+      <tr v-for="(data, ind) in getThemes" :key="data.id" class="tb_string">
         <td>{{ data.id }}</td>
         <td>{{ data.date }}</td>
         <td class="theme-text">
@@ -33,6 +34,8 @@
           </div>
         </td>
         <td>{{ data.login }}</td>
+        <td>{{count(data.id)}}{{$store.getters['posts/getCount'][ind]}}</td>
+        
       </tr>
     </table>
     <div class="new">
@@ -71,6 +74,12 @@ export default {
     getThemes() {
       return this.$store.getters["themes/getThemes"];
     },
+    // count(){
+    //   return this.$store.dispatch("posts/count")
+    // }
+    resCount(){
+      return this.$store.getters['posts/getCount']
+    }
   },
   methods: {
     themeSelect(id) {
@@ -105,9 +114,14 @@ export default {
         this.$store.dispatch("themes/loadThemes");
       });
     },
+    count(id){  
+      this.$store.dispatch("posts/count", id)
+    },
+    
   },
   mounted() {
     this.$store.dispatch("themes/loadThemes");
+    
   },
 };
 </script>

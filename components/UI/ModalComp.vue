@@ -15,6 +15,7 @@ export default {
     },
     id: {
       type: String,
+      default: ''
     },
     themeId:{
         type: String,

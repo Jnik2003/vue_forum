@@ -15,6 +15,7 @@ export default {
     registerResult: '',
     //чекбокс запомнить меня
     isRememberMe: false,
+    userId: '',
   },
   getters: {
     getLoginInputs(state) {
@@ -41,6 +42,9 @@ export default {
     getIsRememberMe(state) {
       return state.isRememberMe
     },
+    getUserId(state){
+      return state.userId
+    }
   },
   mutations: {
     validation(state, [activated, valid, ind, array]) {
@@ -57,6 +61,7 @@ export default {
       state.isLoggedIn = false
       state.isRememberMe = false
       state.registerResult = ''
+      state.userId = ''
       state.loginInputs.forEach((item) => {
         item.activated = false
         item.valid = false
@@ -98,6 +103,9 @@ export default {
       state.isLoggedIn = true
       state.loginInputs[0].value = login
     },
+    userId(state, id){
+      state.userId = id
+    }
   },
   actions: {
     async login({ commit, getters }, [login, pwd, rem]) {
@@ -113,9 +121,9 @@ export default {
         }) // serve
         let res_from_login_php = await response.text()
         // res_from_login_php = JSON.parse(res_from_login_php)
+        // console.log(JSON.parse(res_from_login_php))
         console.log(JSON.parse(res_from_login_php))
-        // console.log(getters.getIsRememberMe)
-        if (JSON.parse(res_from_login_php)[0] === '1') {
+        if (JSON.parse(res_from_login_php) != '0') {
           //если галочка запомнить - создаем запись в ЛС
           // if (JSON.parse(res_from_login_php)[2] != false) {
           if (getters.getIsRememberMe) {
@@ -126,6 +134,7 @@ export default {
           }
           commit('login')
           commit('loginError', '')
+          commit('userId', JSON.parse(res_from_login_php)[0]) // !!!!!!! дать id
         } else {
           console.log(JSON.parse(res_from_login_php))
           commit('loginError', 'Неверный логин или пароль')
@@ -189,8 +198,9 @@ export default {
         let res_from_autologin_php = await resp.text()
         // console.log(res_from_autologin_php)
         // console.log(JSON.parse(res_from_autologin_php))
-        if (res_from_autologin_php == 1) {
+        if (res_from_autologin_php != 0) {
           commit('autologin', [login, hash])
+          commit('userId', res_from_autologin_php)
         } else {
           commit('logout')
         }

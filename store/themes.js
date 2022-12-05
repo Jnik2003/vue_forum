@@ -6,7 +6,13 @@ export default {
   getters:{
     getThemes(state){
         return state.themes
-    }
+    },
+    // inCart(state) {
+    //   return function (id) {
+    //     // return state.items.some((item) => item.id == id);
+    //     return id
+    //   };
+    // },
   },
   mutations:{
     loadThemes(state, arr){
